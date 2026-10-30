@@ -57,18 +57,48 @@ def create_subset(input_file, output_file, subset_size, stratify_by, random_stat
                 raise ValueError(f"Mask column '{col}' not found in the input file.")
 
         logging.info("Creating stratified subset...")
-        subset = df.groupby(stratify_by, group_keys=False).apply(lambda x: x.sample(min(len(x), int(subset_size * len(x) / len(df))), random_state=random_state))
+        if subset_size > len(df):
+            logging.warning(f"Subset size {subset_size} exceeds row count {len(df)}; returning all rows.")
+
+        # Iterate the groups instead of groupby.apply: on pandas 2.2 the
+        # apply path drops the grouping columns from the result, so the
+        # subset silently lost the very columns it was stratified by.
+        # Each stratum contributes its proportional share, at least one row
+        # while rows remain, so a small stratum is not rounded away to zero.
+        parts = []
+        for _, group in df.groupby(stratify_by, sort=False):
+            share = int(subset_size * len(group) / len(df))
+            take = min(len(group), max(1, share)) if subset_size >= 1 else 0
+            parts.append(group.sample(take, random_state=random_state))
+        subset = pd.concat(parts) if parts else df.iloc[0:0]
+
+        # Proportional rounding can land below the requested size; top up
+        # from the rows no stratum claimed so the output size is exact
+        # (capped by the input size, as the over-request warning states).
+        if len(subset) < min(subset_size, len(df)):
+            remaining = df.drop(index=subset.index)
+            need = min(subset_size, len(df)) - len(subset)
+            subset = pd.concat([subset, remaining.sample(need, random_state=random_state)])
 
         if len(subset) > subset_size:
           subset = subset.sample(subset_size, random_state=random_state)
 
         logging.info("Masking data...")
+        # Masking draws from Faker and numpy, neither of which the sampling
+        # random_state touches. Seed both, or two runs with the same
+        # --random_state sample the same rows but mask them differently.
         fake = Faker()
+        fake.seed_instance(random_state)
+        np.random.seed(random_state)
         for col in mask_columns:
             if df[col].dtype == 'object':  # Mask string columns with fake names
                 subset[col] = [fake.name() for _ in range(len(subset))]
             elif pd.api.types.is_numeric_dtype(df[col]):  # Mask numeric columns with random numbers
-                subset[col] = np.random.randint(df[col].min(), df[col].max(), len(subset))
+                # randint excludes the high end; add 1 so the column maximum
+                # is reachable, and guard the constant-column case (min equal
+                # to max would make randint raise low >= high).
+                low, high = int(df[col].min()), int(df[col].max())
+                subset[col] = np.random.randint(low, high + 1, len(subset)) if high > low else low
             else:
                 logging.warning(f"Column {col} has unsupported data type for masking.")
 
