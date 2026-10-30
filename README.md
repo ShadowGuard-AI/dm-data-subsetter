@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # dm-data-subsetter
 Creates a statistically representative subset of a larger dataset while preserving data relationships. Uses stratified sampling based on key fields to maintain distribution fidelity. Relies on Pandas and NumPy. - Focused on Tools designed to generate or mask sensitive data with realistic-looking but meaningless values
 
