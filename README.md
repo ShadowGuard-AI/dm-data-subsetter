@@ -16,5 +16,7 @@ Creates a statistically representative subset of a larger dataset while preservi
 - `--random_state`: Random state for reproducibility.
 - `--mask_columns`: List of column names to mask with fake data.
 
+The output file must not be the input file. A run that names the same file for both, in any spelling that resolves to the same path, is refused at exit 1 before any write.
+
 ## License
 Copyright (c) ShadowStrikeHQ

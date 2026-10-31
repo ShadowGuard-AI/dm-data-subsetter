@@ -36,6 +36,8 @@ def create_subset(input_file, output_file, subset_size, stratify_by, random_stat
     """
     try:
         # Input validation
+        if os.path.exists(input_file) and os.path.realpath(input_file) == os.path.realpath(output_file):
+            raise ValueError("Output file must not be the same as the input file.")
         if not os.path.exists(input_file):
             raise FileNotFoundError(f"Input file not found: {input_file}")
         if not input_file.lower().endswith('.csv'):
