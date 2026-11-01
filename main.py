@@ -68,6 +68,15 @@ def create_subset(input_file, output_file, subset_size, stratify_by, random_stat
         # Each stratum contributes its proportional share, at least one row
         # while rows remain, so a small stratum is not rounded away to zero.
         parts = []
+        # Every group samples with the same random_state value, so two
+        # groups of the same size make the same positional picks inside
+        # themselves. The row choices are reproducible across runs, and
+        # correlated across groups in a way a single shared stream would
+        # not be. I keep it because matching a documented seed matters more
+        # here than decorrelating the groups.
+        # The output order also changes here: parts are concatenated in
+        # group order, first appearance order with sort=False, so the
+        # subset comes out clustered by stratum, not in input order.
         for _, group in df.groupby(stratify_by, sort=False):
             share = int(subset_size * len(group) / len(df))
             take = min(len(group), max(1, share)) if subset_size >= 1 else 0
@@ -93,9 +102,18 @@ def create_subset(input_file, output_file, subset_size, stratify_by, random_stat
         fake.seed_instance(random_state)
         np.random.seed(random_state)
         for col in mask_columns:
+            # The branch is chosen from the FULL frame's dtype, not the
+            # subset's, and the string test is an exact object dtype match:
+            # a text column pandas stored under its newer string dtype
+            # falls past both branches into the unsupported warning below.
             if df[col].dtype == 'object':  # Mask string columns with fake names
                 subset[col] = [fake.name() for _ in range(len(subset))]
             elif pd.api.types.is_numeric_dtype(df[col]):  # Mask numeric columns with random numbers
+                # The range also comes from the full frame, so masked values
+                # can land outside anything the subset itself contained. The
+                # int() casts truncate a float column's ends, and the masked
+                # values are whole numbers: a decimal column is masked with
+                # integers and its type changes along with its values.
                 # randint excludes the high end; add 1 so the column maximum
                 # is reachable, and guard the constant-column case (min equal
                 # to max would make randint raise low >= high).
