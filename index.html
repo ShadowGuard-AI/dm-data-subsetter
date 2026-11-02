@@ -1,166 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dm Data Subsetter: what it is, how it runs, where it stops</title>
-<meta name="description" content="Dm Data Subsetter is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.">
-<style>
-:root {
-  --bg: #121418; --panel: #1c2028; --ink: #e8ecf0;
-  --mut: #252b36;
-  --acc: #5cc8e0; --acc2: #f0a05c;
-  --line: #1c2028;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font-family: 'Palatino Linotype', Palatino, serif; line-height: 1.55; }
-code, pre, .mono { font-family: 'Menlo', monospace; }
-a { color: var(--acc2); }
-.hero { padding: 3rem 6vw 1rem; }
-.hero img.banner { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; }
-.logo { width: 92px; height: 92px; border-radius: 18px;
-  border: 1px solid var(--line); }
-h1 { font-size: 2.4rem; margin: 0.4em 0 0.1em; }
-h2 { border-bottom: 2px solid var(--acc); padding-bottom: 0.2em;
-  margin-top: 2em; }
-.lede { font-size: 1.15rem; max-width: 62ch; }
-main { padding: 0 6vw 3rem; max-width: 1180px; margin: 0 auto; }
-.grid { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.card { background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; padding: 1rem 1.2rem; }
-.card.pop { animation: rise 0.7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; } }
-pre.code { background: #101014; color: #e8e6df; padding: 1rem 1.2rem;
-  border-radius: 12px; overflow-x: auto; font-size: 0.86rem;
-  border-left: 5px solid var(--acc); }
-table { border-collapse: collapse; width: 100%; }
-td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.6rem;
-  text-align: left; }
-.shots { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.shots img { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; background: #f4f1e8; }
-footer { padding: 2rem 6vw; border-top: 1px solid var(--line);
-  color: var(--mut); }
-.rail { display: flex; gap: 1.2rem; align-items: flex-start; }
-.rail nav { position: sticky; top: 1rem; min-width: 180px; }
-@media (max-width: 760px) { .rail { flex-direction: column; }
-  .rail nav { position: static; } }
-@media (prefers-reduced-motion: reduce) {
-  .card.pop { animation: none; } * { scroll-behavior: auto; } }
-</style>
-</head>
-<body class="layout-cards">
-<!-- This page exists for dm-data-subsetter alone: the layout (index-cards),
-     the colors, and the type were picked for this project, not
-     shared with the other project pages. The code block below is
-     copied from the file it names, line for line. If it looks
-     plain, that is because the project is plain, and I would
-     rather the page match the project than dress it up. The one
-     thing I will not do here is oversell: what this project does
-     not do is stated on the page, not hidden from it. -->
-<header class="hero">
-  <img class="logo" src="assets/logo.png" alt="Dm Data Subsetter logo">
-  <img class="banner" src="assets/banner.png" alt="">
-  <h1>Dm Data Subsetter</h1>
-  <p class="mono"><a href="https://github.com/ShadowGuard-AI/dm-data-subsetter">github.com/ShadowGuard-AI/dm-data-subsetter</a></p>
-</header>
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>dm-data-subsetter: The Iceman's Shoulder Pad</title>
+<style>@font-face{font-family:Disp;src:url("fonts/Capriola.ttf")}@font-face{font-family:Text;src:url("fonts/Bitter.ttf")}
+body{background:#F3EEE0;font-family:Text,serif;color:#23201C;margin:0}main{max-width:920px;margin:0 auto;padding:28px}
+h1,h2,h3{font-family:Disp,sans-serif;color:#13110F}section{background:#E7DFC9;padding:18px 22px;margin:16px 0;border:2px solid #13110F;border-left:6px solid #13110F}
+section.stratify{border-left-color:#1B2A4A}img{max-width:100%}
+button{background:repeating-linear-gradient(93deg,#4A3421 0 14px,#54391F 14px 28px);color:#F3EEE0;border:2px solid #13110F;padding:12px 22px;font-family:Disp,sans-serif;clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%)}
+button:hover{background:repeating-linear-gradient(93deg,#5D4128 0 14px,#68482A 14px 28px)}
+button:active{transform:translateY(2px)}button:focus{outline:none;box-shadow:0 4px 0 #B08D3E}
+a{color:#1B2A4A}a::before{content:"❐  ";color:#1B2A4A}a:hover::before{color:#B08D3E}
+.label{display:inline-block;border:1px solid #13110F;padding:2px 8px;font-size:14px;background:#F3EEE0}
+.marker{display:inline-block;background:#1B2A4A;color:#F3EEE0;padding:2px 10px;font-family:Disp,sans-serif;font-size:13px}
+.clasp{color:#B08D3E;font-family:Disp,sans-serif}
+.absence{font-size:19px;background:#F3EEE0;border:1px dashed #13110F;padding:12px 14px}
+.blankline{border-bottom:2px solid #1B2A4A;height:26px;margin:8px 0}
+pre{white-space:pre-wrap;background:#F3EEE0;padding:14px;border:1px solid #13110F}code{font-family:Text,serif}
+.stamp{border:3px solid #1B2A4A;color:#1B2A4A;font-family:Disp,sans-serif;display:inline-block;padding:3px 10px;transform:rotate(-4deg)}
+</style></head><body><main>
+<img src="intro-banner.png" alt="Introduction banner: one ice tong alone in clear foreground space at last light, tapes and carbon copies behind it on the cart seat, the icehouse window lit furthest off, no lettering">
+<h1>dm-data-subsetter: The Iceman's Shoulder Pad</h1>
+<p>Wherever this site names itself, it uses the joined form dm-data-subsetter: The Iceman's Shoulder Pad, repository first, theme second. The page is built like the book a roundsman carried: one ruled column per stop, and the stops in round order. Weigh the block, load the cart, carry it to the door, get the signature.</p>
+<img src="logo.png" alt="Logo: one ice tong closed on nothing against paper, uniform navy band at the crossing, brass rivet, the name below">
+<img src="banner.png" alt="Wordmark banner: a winter delivery round at last light, cart with the name painted on its side board, horse standing patient, the iceman at a kitchen door with a block on his padded shoulder">
+<img src="scene.svg" alt="Animated scene in three bands: lamp lit at dusk, tape drawn out along the block, top carbon copy lifted off its pad">
+<div><button type="button">Cut the Subset</button></div>
+<p><span class="label">Rows to Include</span> <span class="label">Stratify by These Columns</span></p>
+<h3>Never Set It Back on the Stock</h3>
+<section><h2>Stop one: weigh the block</h2><p><span class="marker">Round marker</span></p><p>Out of a larger dataset the program cuts a subset that still stands for the whole: statistically representative, with the relationships between the data kept intact. Stratified sampling does the cutting, keyed on key fields, so distributions stay faithful to the parent stock. Pandas and NumPy do the hauling underneath. The family sentence the README carries closes the stop: the tool sits among tools designed to generate or mask sensitive data with realistic looking but meaningless values. Not one row out of anybody's dataset is printed here, not one column name, not one count, here or anywhere else on this site.</p><p class="absence">Recorded gap: Pandas and NumPy are relied on in the description sentence, and neither one is named in any install step anywhere in the source. The dependency reaches a reader through the description alone. That gap is recorded here as a gap, not filled.</p></section>
+<section><h2>Stop two: fetching the code, with one repair on the route</h2><p><code>git clone https://github.com/ShadowGuard-AI/dm-data-subsetter</code></p><p><span class="clasp">Correction, labelled openly:</span> the line above is a correction. The address the README itself prints points at a predecessor organisation, ShadowStrikeHQ, so a caller who follows the printed line to the letter knocks at the wrong door. The mended line gives the organisation name with its hyphen, ShadowGuard-AI. Nobody dresses the mended line up as the original wording, and the original stays standing in the preserved record at the foot of this page.</p></section>
+<section><h2>Stop three: the shape of a call, and no step further</h2><p><code>./dm-data-subsetter [params]</code></p><p>Program name out front, bracketed parameters behind. That shape is all the source gives. No worked call exists in the source. No input file gets named there, and no column gets named there, so the ruled lines of this stop stay empty on purpose instead of being filled with an example somebody invented on the spot.</p><div class="blankline"></div><div class="blankline"></div><div class="blankline"></div></section>
+<section><h2>Stop four: the controls, in the order the record hands them over</h2><p>Help leads: <code>-h</code>, the flag that shows the help message and exits. Then <code>--subset_size</code>, the number of rows to include in the subset, a plain count. Then <code>--stratify_by</code>, a list of column names to use for stratified sampling. Then <code>--random_state</code>, the random state for reproducibility. Then <code>--mask_columns</code> brings up the rear, a list of column names to mask with fake data. The two list flags stay lists on this stop and the size flag stays a plain count, worded the way the source words them.</p><p class="absence">Absence, printed at full size: --random_state carries no default in the source, so no default is printed here. What an unset state does is left for the program itself to say.</p><p class="absence">Absence, printed at full size: --subset_size has no stated floor, no stated ceiling, and no stated behaviour for a count larger than the rows on hand. Nobody on this page guesses a unit, a floor, or a ceiling for it.</p><p class="absence">Absence, printed at full size: --stratify_by names key fields, and the source does not say what follows when a named column is missing from the load. That outcome is absent from the record and stays absent here.</p><p>The second duty of the tool stands on this stop in full: --mask_columns masks the columns a caller names, with fake data. The theme entry never mentioned that work. The live record insists on it, so it stands here at the same size as every other control.</p></section>
+<section><h2>Stop five: the output guard, given the whole doorway</h2><p><span class="stamp">Refused</span></p><h3>Never Set It Back on the Stock</h3><p>The output file must not be the input file. Name one file for both jobs, under any spelling that resolves to the same path, and the run is refused at exit 1 before a single write happens. Put the way the round puts it: a cut block never gets set back down on top of the stock it was cut from, because tomorrow's round loads from that stock.</p></section>
+<section><h2>Stop six: two licence facts on separate pages of the book</h2><p>Page one: the repository LICENSE itself, MIT terms. Its holder is described by outline only: the pen name in two words, a given name shortened inside brackets, the handle in parentheses after. The full wording of that holder line is not reproduced on this page. <span class="clasp">Clasp: brass.</span></p><p>Page two, marked as a site correction: the README closing line, respelled with today's hyphenated organisation in place of the predecessor name the published line used, reads: Copyright (c) ShadowGuard-AI. Site correction.</p></section>
+<section class="stratify"><h2>Stop seven: the round book</h2><p><span class="marker">Stratify stop marker</span></p><p>This book sorts callers the way a roundsman sorts doors along a street, and no sibling site borrows the habit.</p><p>Weigh first, for the caller who came asking about proportion: the stratify entry. Key fields, distribution fidelity, relationships preserved: a smaller block cut so the balance of the whole stock survives inside it.</p><p>Count second, for the caller who came asking about size: the subset entry, a number of rows, with no figure invented to sit beside the flag.</p><p>Chance third, for the caller who wants a draw they can repeat: the random state entry, its default honestly left unprinted, as the source leaves it.</p><p>Cover last, for the caller who needs a column hidden: the mask entry. Columns the caller names themselves, masked with fake data. Work the theme entry never mentioned, and the live record insists on.</p><p>A teacher carrying a class extract, an analyst carrying a sample, an engineer carrying a test set: each one signs for the entry they walked up for, the book takes the signature down, and the tongs move on to the next door.</p></section>
+<section><h2>The preserved README record</h2><pre>![Banner](banner.png)
 
-<main>
-  <section class="rail">
-    <nav aria-label="on this page">
-      <p class="mono"><a href="#run">Run it</a><br>
-      <a href="#files">The files</a><br>
-      <a href="#sheets">The sheets</a><br>
-      <a href="https://github.com/ShadowGuard-AI/dm-data-subsetter">The repo</a></p>
-    </nav>
-    <div>
-      <p class="lede">Dm Data Subsetter is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.</p>
-      <div class="grid">
-        <div class="card pop"><h3>What it is</h3>
-          <p>Dm Data Subsetter: 5 files, 166 counted
-          lines across Python 143, Markdown 20, Text 3. One job, done in the
-          open, in files you can read.</p></div>
-        <div class="card pop"><h3>The biggest piece</h3>
-          <p><code>main.py</code> carries the most
-          lines. If the project grows, that file is where the growth
-          lands first, for better or worse.</p></div>
-        <div class="card pop"><h3>The honest gap</h3>
-          <p>No test files yet. That is the honest gap, and the roadmap in the visuals folder says what the first one should cover.</p></div>
-      </div>
-      <section id="run">
-        <h2>Run it</h2>
-        <p>The repo README has the exact commands for this one. The
-        shape is the shape for most of my projects: clone it, read the
-        top file first so you know what will happen, then run it on
-        something you do not mind breaking.</p>
-        <p class="mono">$ git clone https://github.com/ShadowGuard-AI/dm-data-subsetter.git<br>$ cd dm-data-subsetter</p>
-      </section>
-      
-  <section aria-label="real code">
-    <h2>The code, as it sits in the repo</h2>
-    <p>From <code>main.py</code>, line 10 on. I did
-    not tidy it for the page. What you see is what the file has.</p>
-    <pre class="code"><code>logging.basicConfig(level=logging.INFO, format=&#x27;%(asctime)s - %(levelname)s - %(message)s&#x27;)
+# dm-data-subsetter
+Creates a statistically representative subset of a larger dataset while preserving data relationships. Uses stratified sampling based on key fields to maintain distribution fidelity. Relies on Pandas and NumPy. - Focused on Tools designed to generate or mask sensitive data with realistic-looking but meaningless values
 
-def setup_argparse():
-    &quot;&quot;&quot;
-    Sets up the argument parser for the command-line interface.
-    &quot;&quot;&quot;
-    parser = argparse.ArgumentParser(description=&quot;Creates a statistically representative subset of a larger dataset.&quot;)
-    parser.add_argument(&quot;input_file&quot;, help=&quot;Path to the input CSV file.&quot;)
-    parser.add_argument(&quot;output_file&quot;, help=&quot;Path to the output CSV file for the subset.&quot;)
-    parser.add_argument(&quot;--subset_size&quot;, type=int, required=True, help=&quot;Number of rows to include in the subset.&quot;)
-    parser.add_argument(&quot;--stratify_by&quot;, nargs=&#x27;+&#x27;, help=&quot;List of column names to use for stratified sampling.&quot;, required=True)
-    parser.add_argument(&quot;--random_state&quot;, type=int, default=42, help=&quot;Random state for reproducibility.&quot;)
-    parser.add_argument(&quot;--mask_columns&quot;, nargs=&#x27;+&#x27;, help=&quot;List of column names to mask with fake data.&quot;, default=[])
-    return parser
+## Install
+`git clone https://github.com/ShadowStrikeHQ/dm-data-subsetter`
 
-def create_subset(input_file, output_file, subset_size, stratify_by, random_state, mask_columns):
-    &quot;&quot;&quot;
-    Creates a stratified subset of the input data.
+## Usage
+`./dm-data-subsetter [params]`
 
-    Args:
-        input_file (str): Path to the input CSV file.
-        output_file (str): Path to the output CSV file.</code></pre>
-  </section>
-      <section id="files">
-        <h2>The files that matter</h2>
-        <table><tr><th>File</th><th>Lines</th></tr>
-        <tr><td><code>main.py</code></td><td>143</td></tr>
-        <tr><td><code>README.md</code></td><td>20</td></tr>
-        <tr><td><code>requirements.txt</code></td><td>3</td></tr>
-        <tr><td><code>banner.png</code></td><td>0</td></tr>
-        <tr><td><code>logo.png</code></td><td>0</td></tr>
-        </table>
-        <p>Names doing the work: <span class="mono">setup_argparse, create_subset, main</span>.</p>
-      </section>
-      <section id="sheets">
-        <h2>Drawn by hand</h2>
-        <p>I sketch my projects on notebook paper so I have to
-        understand them well enough to draw them. The full set,
-        with the counts and how they were counted, is the
-        <a href="https://github.com/ShadowGuard-AI/dm-data-subsetter/tree/main/dm-data-subsetter-Visuals">dm-data-subsetter-Visuals</a>
-        folder in the repo. Nothing is drawn over the binder holes.
-        That is a rule, not a style.</p>
-        <div class="shots">
-          <img src="assets/architecture.png" alt="Hand drawn architecture sheet for Dm Data Subsetter">
-          <img src="assets/flowchart.png" alt="Hand drawn flowchart sheet for Dm Data Subsetter">
-          <img src="assets/product-map.png" alt="Hand drawn product map sheet for Dm Data Subsetter">
-        </div>
-      </section>
-    </div>
-  </section>
-</main>
-<footer>
-  <p>Dm Data Subsetter is one of my projects. This page was written
-  from the repo itself on 2026-10-30: the counts are the
-  repo's counts, the code is the repo's code, and the gaps are the
-  repo's gaps.</p>
-</footer>
-</body>
-</html>
+## Parameters
+- `-h`: Show help message and exit
+- `--subset_size`: Number of rows to include in the subset.
+- `--stratify_by`: List of column names to use for stratified sampling.
+- `--random_state`: Random state for reproducibility.
+- `--mask_columns`: List of column names to mask with fake data.
+
+The output file must not be the input file. A run that names the same file for both, in any spelling that resolves to the same path, is refused at exit 1 before any write.
+
+## License
+Copyright (c) ShadowStrikeHQ</pre></section>
+</main></body></html>
